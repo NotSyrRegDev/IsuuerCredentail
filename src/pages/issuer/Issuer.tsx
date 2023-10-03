@@ -68,23 +68,29 @@ const Issuer = () => {
       const issueEmploymentPersonVC = async () => {
         try {
           if (isJson(VCschemaData)) {
-            const example = {...JSON.parse(VCschemaData)}
-
+            const example = { ...JSON.parse(VCschemaData) };
+        
             example.holderDid = inputDID || appState.didToken || '';
-
-            const {unsignedVC} = await ApiService.issueUnsignedVC(example);
-
+        
+            const { unsignedVC } = await ApiService.issueUnsignedVC(example);
+        
             setState({
               ...state,
               currentUnsignedVC: unsignedVC,
               currentSignedVC: null,
-              isCurrentVCVerified: false
-            })
-
+              isCurrentVCVerified: false,
+            });
+        
             alert('Unsigned VC successfully created.');
           }
         } catch (error) {
-          ApiService.alertWithBrowserConsole(error.message);
+          if (typeof error === 'string') {
+            // Handle the error if it's a string (for example, an error message).
+            ApiService.alertWithBrowserConsole(error);
+          } else {
+            // Handle other types of errors (if needed).
+            ApiService.alertWithBrowserConsole('An unknown error occurred');
+          }
         }
       }
 
@@ -93,23 +99,28 @@ const Issuer = () => {
        * */
       const signVc = async () => {
         try {
-          if( state.currentUnsignedVC ) {
-            const {signedCredential} = await ApiService.signVC({
-              unsignedCredential: state.currentUnsignedVC
+          if (state.currentUnsignedVC) {
+            const { signedCredential } = await ApiService.signVC({
+              unsignedCredential: state.currentUnsignedVC,
             });
-
+        
             setState({
               ...state,
-              currentSignedVC: signedCredential
-            })
-
+              currentSignedVC: signedCredential,
+            });
+        
             alert('Unsigned VC successfully signed.');
-          }
-          else {
-            alert('No unsigned VC found. Please create one and try again.')
+          } else {
+            alert('No unsigned VC found. Please create one and try again.');
           }
         } catch (error) {
-          ApiService.alertWithBrowserConsole(error.message);
+          if (typeof error === 'string') {
+            // Handle the error if it's a string (for example, an error message).
+            ApiService.alertWithBrowserConsole(error);
+          } else {
+            // Handle other types of errors (if needed).
+            ApiService.alertWithBrowserConsole('An unknown error occurred');
+          }
         }
       }
 
@@ -206,10 +217,10 @@ const Issuer = () => {
                 {/* </div>
             </div> */}
             <div className="json-tree">
-              <ReactJson
+              {/* <ReactJson
               src={state.currentSignedVC || state.currentUnsignedVC || {}}
               name={(state.currentSignedVC && 'Signed VC') || (state.currentUnsignedVC && 'Unsigned VC') || '-empty-' }
-              />
+              /> */}
             </div>
         </div>
     )

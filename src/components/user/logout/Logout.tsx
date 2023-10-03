@@ -14,17 +14,22 @@ const UserLogout = () => {
    * */
   const userLogOut = async () => {
     try {
-      await ApiService.logout()
-
-      alert('You have been successfully signed out from all devices.')
-
+      await ApiService.logout();
+    
+      alert('You have been successfully signed out from all devices.');
+    
       setAppState({
         ...appState,
-        ...appContextDefaultValue.appState
-      })
-
+        ...appContextDefaultValue.appState,
+      });
     } catch (error) {
-      ApiService.alertWithBrowserConsole(error.message)
+      if (typeof error === 'string') {
+        // Handle the error if it's a string (for example, an error message).
+        ApiService.alertWithBrowserConsole(error);
+      } else {
+        // Handle other types of errors (if needed).
+        ApiService.alertWithBrowserConsole('An unknown error occurred');
+      }
     }
   }
 

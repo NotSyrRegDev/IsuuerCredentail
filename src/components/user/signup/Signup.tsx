@@ -31,31 +31,36 @@ const UserSignup = () => {
 
     try {
       // perform user registration
-      const tokenData = await ApiService.signUp(username, password)
-      // check if user used arbitrary username, instead of a phone number or email address
-      const isUsername = !username.startsWith('+') && username.indexOf('@') === -1
-
-      // this app currently supports arbitrary username
+      const tokenData = await ApiService.signUp(username, password);
+      // check if user used an arbitrary username, instead of a phone number or email address
+      const isUsername = !username.startsWith('+') && username.indexOf('@') === -1;
+    
+      // this app currently supports arbitrary usernames
       if (isUsername) {
-        const {accessToken, did} = tokenData;
-
+        const { accessToken, did } = tokenData;
+    
         ApiService.clientSideLogIn(accessToken, did);
-
+    
         setAppState({
           ...appState,
           isAuthenticated: true,
           accessToken,
           didToken: did,
-          username
-        })
-
+          username,
+        });
+    
         history.push(routes.ROOT);
-      }
-      else {
-        alert('Please provide a valid username (phone numbers and emails addresses are not allowed).')
+      } else {
+        alert('Please provide a valid username (phone numbers and email addresses are not allowed).');
       }
     } catch (error) {
-      ApiService.alertWithBrowserConsole(error.message)
+      if (typeof error === 'string') {
+        // Handle the error if it's a string (for example, an error message).
+        ApiService.alertWithBrowserConsole(error);
+      } else {
+        // Handle other types of errors (if needed).
+        ApiService.alertWithBrowserConsole('An unknown error occurred');
+      }
     }
   }
 
